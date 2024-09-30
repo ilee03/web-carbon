@@ -59,9 +59,4 @@ chrome.extension.onRequest.addListener(function (f, s, r) {
 		purgeOldKeys(_keepDays);
 	}
 });
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status == 'complete' && /^http/.test(tab.url)) {
-        chrome.tabs.sendMessage(tabId, { action: "calculateCarbon" });
-    }
-});
 
