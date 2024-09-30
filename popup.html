@@ -33,11 +33,19 @@
             });
         });
 
-        // Placeholder function to calculate emissions based on the current website URL
+        // Function to calculate emissions based on the current website URL
         function calculateCarbonEmissions(url) {
-            // Example logic to determine emissions based on URL
-            // Replace this logic with actual data or an API call
-            return (Math.random() * 5).toFixed(2); // Placeholder: Random emissions for demonstration
+            // Example logic for emissions calculation:
+            // Assuming an average of 0.02 kg CO2e (20 g) emitted per MB of data transferred
+            // and an estimated average data usage of 2 MB per page view.
+
+            const averageDataUsageMB = 2; // Average data usage per page view in MB
+            const emissionsPerMB = 20; // Emissions in grams CO2e per MB of data
+
+            // Calculate total emissions for the page view
+            const totalEmissions = (averageDataUsageMB * emissionsPerMB).toFixed(2); // Calculate total emissions
+
+            return totalEmissions; // Return the total emissions
         }
     </script>
 </body>
