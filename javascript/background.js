@@ -53,10 +53,8 @@ chrome.extension.onRequest.addListener(function (f, s, r) {
 	setDayCount(0, _dailyCount);
 });
 
-
 chrome.extension.onRequest.addListener(function (f, s, r) {
 	if (getAllKeys(_dayPrefix).length > _keepDays) {
 		purgeOldKeys(_keepDays);
 	}
 });
-
