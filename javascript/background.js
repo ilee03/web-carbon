@@ -53,8 +53,15 @@ chrome.extension.onRequest.addListener(function (f, s, r) {
 	setDayCount(0, _dailyCount);
 });
 
+
 chrome.extension.onRequest.addListener(function (f, s, r) {
 	if (getAllKeys(_dayPrefix).length > _keepDays) {
 		purgeOldKeys(_keepDays);
 	}
 });
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    if (changeInfo.status == 'complete' && /^http/.test(tab.url)) {
+        chrome.tabs.sendMessage(tabId, { action: "calculateCarbon" });
+    }
+});
+

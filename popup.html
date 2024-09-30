@@ -28,34 +28,12 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-                let currentTab = tabs[0];
-                if (currentTab) {
-                    let emissions = calculateCarbonEmissions(currentTab.url); // Calculate emissions based on the URL
-                    updateEmissions(emissions); // Update and store the emissions
-                }
+            // Fetch current carbon emissions from storage
+            chrome.storage.local.get(['currentCarbon', 'totalCarbon'], function (data) {
+                document.getElementById('current-carbon').innerText = (data.currentCarbon || 0) + " g CO2e";
+                document.getElementById('total-carbon').innerText = (data.totalCarbon || 0) + " g CO2e";
             });
         });
-
-        function calculateCarbonEmissions(url) {
-            // Example calculation: Adjust based on actual emission factors (this is just a placeholder)
-            return (Math.random() * 5).toFixed(2); // Replace this with actual logic
-        }
-
-        function updateEmissions(currentEmission) {
-            // Get total from localStorage
-            let totalEmissions = parseFloat(localStorage.getItem('totalCarbon')) || 0;
-
-            // Add current emissions to total
-            totalEmissions += parseFloat(currentEmission);
-
-            // Store the new total in localStorage
-            localStorage.setItem('totalCarbon', totalEmissions.toFixed(2));
-
-            // Update the popup display
-            document.getElementById('current-carbon').innerText = currentEmission + " g CO2e";
-            document.getElementById('total-carbon').innerText = totalEmissions.toFixed(2) + " g CO2e";
-        }
     </script>
 </body>
 

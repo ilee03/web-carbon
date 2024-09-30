@@ -1,10 +1,11 @@
 {
   "name": "WebCarbon",
   "description": "Track carbon emissions resulting from your daily web browsing.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "manifest_version": 2,
   "background": {
-    "scripts": ["javascript/background.js"]
+    "scripts": ["background.js"],
+    "persistent": false
   },
   "browser_action": {
     "default_icon": "icons/icon-32x32.png",
@@ -16,8 +17,13 @@
     "32": "icons/icon-32x32.png",
     "128": "icons/icon-128x128.png"
   },
+  "permissions": [
+    "tabs",
+    "storage",
+    "activeTab"
+  ],
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "js": ["javascript/contentscript.js"]
+    "js": ["contentscript.js"]
   }]
 }
