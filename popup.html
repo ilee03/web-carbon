@@ -15,29 +15,46 @@
         <hr>
         <div class="main-content">
             <div class="today">
-                <div>Current CO<sub>2</sub>e:</div>
+                <div>Current CO<sub>2</sub>e for this website:</div>
                 <span id="current-carbon">0.00 g CO2e</span>
+            </div>
+            <br>
+            <div class="today">
+                <div>Total CO<sub>2</sub>e across all websites:</div>
+                <span id="total-carbon">0.00 g CO2e</span>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Fetch the carbon emission for the current website
             chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                 let currentTab = tabs[0];
                 if (currentTab) {
                     let emissions = calculateCarbonEmissions(currentTab.url); // Calculate emissions based on the URL
-                    document.getElementById("current-carbon").innerText = emissions + " g CO2e"; // Display the emissions
+                    updateEmissions(emissions); // Update and store the emissions
                 }
             });
         });
 
-        // Placeholder function to calculate emissions based on the current website URL
         function calculateCarbonEmissions(url) {
-            // Example logic to determine emissions based on URL
-            // Replace this logic with actual data or an API call
-            return (Math.random() * 5).toFixed(2); // Placeholder: Random emissions for demonstration
+            // Example calculation: Adjust based on actual emission factors (this is just a placeholder)
+            return (Math.random() * 5).toFixed(2); // Replace this with actual logic
+        }
+
+        function updateEmissions(currentEmission) {
+            // Get total from localStorage
+            let totalEmissions = parseFloat(localStorage.getItem('totalCarbon')) || 0;
+
+            // Add current emissions to total
+            totalEmissions += parseFloat(currentEmission);
+
+            // Store the new total in localStorage
+            localStorage.setItem('totalCarbon', totalEmissions.toFixed(2));
+
+            // Update the popup display
+            document.getElementById('current-carbon').innerText = currentEmission + " g CO2e";
+            document.getElementById('total-carbon').innerText = totalEmissions.toFixed(2) + " g CO2e";
         }
     </script>
 </body>
