@@ -40,7 +40,7 @@ body {
 }
 
 .left-content {
-	flex: 45;
+	flex: 100;
 	padding: 10px;
 }
 
