@@ -20,12 +20,6 @@
     "matches": ["<all_urls>"],
     "js": ["javascript/contentscript.js"]
   }]
-  {
-  "permissions": [
-    "tabs",
-    "webRequest",
-    "webRequestBlocking",
-    "<all_urls>"
-],
 
+  
 }
