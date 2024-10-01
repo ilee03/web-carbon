@@ -1,5 +1,5 @@
 var bg;
-var carbonPerPage = 1.76;	// Average carbon per page view
+var carbonPerPage = 1.76; // Average carbon per page view
 
 chrome.tabs.getSelected(null, function (tab) {
 	bg = chrome.extension.getBackgroundPage();
@@ -7,93 +7,62 @@ chrome.tabs.getSelected(null, function (tab) {
 });
 
 function formatCarbonWeight(value) {
-	var suffix = "g";
-	if (value >= 1000000000) {
-		value = value / 1000000000;
+	let suffix = "g";
+	if (value >= 1e9) {
+		value = value / 1e9;
 		suffix = "mmt";
-	} else if (value >= 1000000) {
-		value = value / 1000000;
+	} else if (value >= 1e6) {
+		value = value / 1e6;
 		suffix = "mt";
-	} else if (value >= 1000) {
-		value = value / 1000;
+	} else if (value >= 1e3) {
+		value = value / 1e3;
 		suffix = "kg";
 	}
-	value = value % 1 == 0 ? value : value.toFixed(1)
-	return value + suffix;
+	return value % 1 === 0 ? value : value.toFixed(1) + suffix;
 }
 
 function renderPage() {
-	var today = bg.getDayCount(0)
-	var todayCarbon = document.getElementById('today-carbon');
-	todayCarbon.innerHTML = formatCarbonWeight(today * carbonPerPage);
+	const today = bg.getDayCount(0);
+	document.getElementById('today-carbon').innerHTML = formatCarbonWeight(today * carbonPerPage);
 
-	var dayArr = [];
-	var chart = document.getElementById('chart');
-	for (var i = 29; i >= 0; i--) {
-		var dayCount = bg.getDayCount(i);
-		dayArr[i] = dayCount * carbonPerPage;
+	const dayArr = [];
+	const chart = document.getElementById('chart');
+	for (let i = 29; i >= 0; i--) {
+		dayArr[i] = bg.getDayCount(i) * carbonPerPage;
 	}
-	var max = dayArr.length ? Math.max.apply(null, dayArr) : 0;
+	const max = Math.max(...dayArr, 0);
+	const columnHeight = 120;
+	const ratio = max > 0 ? columnHeight / max : 0;
 
-	var columnHeight = 120.0;
-	var ratio = columnHeight / max;
-	var bar = null;
-	var sum = 0;
-	var days = 0;
-	chart.style.height = (parseInt(columnHeight)) + 'px';
+	chart.innerHTML = ''; // Clear chart before rendering
+	let sum = 0, days = 0;
 
-	for (var i = 29; i >= 0; i--) {
-		var dayCount = dayArr[i];
-		var barHeight = parseInt(dayCount * ratio);
+	dayArr.forEach((dayCount, i) => {
+		const barHeight = dayCount * ratio;
+		const column = document.createElement('div');
+		column.className = 'chart-column';
+		column.title = `${formatCarbonWeight(dayCount)} on ${bg.formatDate(i, '-')}`;
+		
+		const bar = document.createElement('div');
+		bar.className = i === 0 ? 'chart-bar today' : 'chart-bar';
+		bar.style.height = `${barHeight}px`;
 
-		var column = document.createElement('div');
-		column.setAttribute('class', 'chart-column');
-		column.setAttribute('title', formatCarbonWeight(dayCount) + ' on ' + bg.formatDate(i, '-'));
-		column.style.height = parseInt(columnHeight) + 'px';
-
-		var area = document.createElement('div');
-		area.setAttribute('class', 'chart-area');
-		area.style.height = parseInt(columnHeight) + 'px';
-		column.appendChild(area);
-
-		var barWrap = document.createElement('div');
-		barWrap.setAttribute('class', 'chart-bar-wrap');
-		barWrap.style.height = barHeight + 'px';
-		area.appendChild(barWrap);
-
-		bar = document.createElement('div');
-		bar.setAttribute('class', 'chart-bar');
-		if (i == 0) {
-			bar.setAttribute('class', 'chart-bar today');
-		}
-		bar.style.height = barHeight + 'px';
-		barWrap.appendChild(bar);
+		column.appendChild(bar);
 		chart.appendChild(column);
 
 		if (dayCount > 0) {
 			sum += dayCount;
 			days++;
 		}
-	}
+	});
 
-	if (days > 7) {
-		var chartDefault = document.getElementById('chart-default');
-		chartDefault.setAttribute('class', 'chart-default-hidden');
-	}
-
-	var avgDay = sum / days;
+	const avgDay = days > 0 ? sum / days : 0;
 	if (avgDay) {
-		var year = avgDay * 365;
-		var fc = document.getElementById('forecast-count');
-		fc.innerHTML = formatCarbonWeight(year);
+		document.getElementById('forecast-count').innerHTML = formatCarbonWeight(avgDay * 365);
+	}
 
-		var flight = 50 * 1000;
-		var trees = 24 * 1000;
-		if (year >= flight) {
-			var fe = document.getElementById('flights');
-			var ft = document.getElementById('trees');
-			fe.innerHTML = "🛫  Whoa! That's equivalent to " + (year / flight).toFixed(0) + " flights between Paris and London. ";
-			ft.innerHTML = "🌴  You need to plant " + (year / trees).toFixed(0) + " trees to offset this amount.";
-		}
+	// Hide the default message if data is available
+	if (days > 7) {
+		document.getElementById('chart-default').classList.add('chart-default-hidden');
 	}
 }
