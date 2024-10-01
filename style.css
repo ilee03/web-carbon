@@ -7,7 +7,7 @@
 
 body {
 	font-family: 'Arial', sans-serif;
-	width: 700px;
+	width: 400px;
 	background-color: var(--background-color);
 }
 
@@ -40,7 +40,7 @@ body {
 }
 
 .left-content {
-	flex: 100;
+	flex: 45;
 	padding: 10px;
 }
 
