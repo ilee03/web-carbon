@@ -14,6 +14,8 @@
 			<div class="logo-text">WebCarbon Counter</div>
 		</div>
 		<hr>
+		<div class="sub-heading">On average, each webpage you view emits about 1.76g of carbon or equivalent gases. This
+			extension records your browsing emissions, showing how fast they add up!</div>
 
 		<div class="main-content">
 
@@ -22,12 +24,24 @@
 					<div>Today's CO<sub>2</sub>e</div>
 					<span id="today-carbon"></span>
 				</div>
-				<div class="current-page">
-					<div>Current Page CO<sub>2</sub>e</div>
-					<span id="current-page-carbon"></span>
+				<div class="chart-caption">Graph for past 30 days</div>
+				<div id="chart">
+					<div id="chart-default"></div>
 				</div>
 			</div>
+
+			<div class="right-content">
+				<div class="forecast">
+					<div class="forecast-title">Annual Forecast (CO<sub>2</sub>e / year)</div>
+					<div id="forecast-count">Too early to tell</div>
+					<div class="forecast-equivalent" id="flights">Come back in 1-2 days for your annual carbon forecast.
+					</div>
+					<div class="forecast-equivalent" id="trees"></div>
+				</div>
+			</div>
+
 		</div>
+
 	</div>
 </body>
 
