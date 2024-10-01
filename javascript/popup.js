@@ -81,4 +81,5 @@ function renderPage() {
 		chartDefault.setAttribute('class', 'chart-default-hidden');
 	}
 
+
 }
