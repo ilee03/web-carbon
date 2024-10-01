@@ -22,6 +22,26 @@ function formatCarbonWeight(value) {
 	return value + suffix;
 }
 
+function renderPage() {
+	var today = bg.getDayCount(0)
+	var todayCarbon = document.getElementById('today-carbon');
+	todayCarbon.innerHTML = formatCarbonWeight(today * carbonPerPage);
+
+	var dayArr = [];
+	var chart = document.getElementById('chart');
+	for (var i = 29; i >= 0; i--) {
+		var dayCount = bg.getDayCount(i);
+		dayArr[i] = dayCount * carbonPerPage;
+	}
+	var max = dayArr.length ? Math.max.apply(null, dayArr) : 0;
+
+	var columnHeight = 120.0;
+	var ratio = columnHeight / max;
+	var bar = null;
+	var sum = 0;
+	var days = 0;
+	chart.style.height = (parseInt(columnHeight)) + 'px';
+
 
 
 	var avgDay = sum / days;
@@ -40,3 +60,4 @@ function formatCarbonWeight(value) {
 		}
 	}
 
+}
