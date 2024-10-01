@@ -58,4 +58,3 @@ chrome.extension.onRequest.addListener(function (f, s, r) {
 		purgeOldKeys(_keepDays);
 	}
 });
-
