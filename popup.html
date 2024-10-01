@@ -1,22 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebCarbon</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 10px;
-        }
-        .co2-value {
-            font-size: 24px;
-            font-weight: bold;
-        }
-    </style>
+	<meta charset="utf-8" />
+	<script src="javascript/popup.js" type="text/javascript"></script>
+	<link href="style.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
-    <div class="co2-value" id="co2Value">Loading...</div>
-    <script src="popup.js"></script>
+	<div class="body">
+		<div class="logo">
+			<img class="logo-img" src="./icons/icon-128x128.png">
+			<div class="logo-text">WebCarbon Counter</div>
+		</div>
+		<hr>
+
+		<div class="main-content">
+
+			<div class="left-content">
+				<div class="today">
+					<div>Today's CO<sub>2</sub>e</div>
+					<span id="today-carbon"></span>
+
+	</div>
 </body>
+
 </html>
