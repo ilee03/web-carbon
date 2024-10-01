@@ -1,48 +1,22 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<script src="javascript/popup.js" type="text/javascript"></script>
-	<link href="style.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebCarbon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+        }
+        .co2-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
 </head>
-
 <body>
-	<div class="body">
-		<div class="logo">
-			<img class="logo-img" src="./icons/icon-128x128.png">
-			<div class="logo-text">WebCarbon Counter</div>
-		</div>
-		<hr>
-		<div class="sub-heading">On average, each webpage you view emits about 1.76g of carbon or equivalent gases. This
-			extension records your browsing emissions, showing how fast they add up!</div>
-
-		<div class="main-content">
-
-			<div class="left-content">
-				<div class="today">
-					<div>Today's CO<sub>2</sub>e</div>
-					<span id="today-carbon"></span>
-				</div>
-				<div class="chart-caption">Graph for past 30 days</div>
-				<div id="chart">
-					<div id="chart-default"></div>
-				</div>
-			</div>
-
-			<div class="right-content">
-				<div class="forecast">
-					<div class="forecast-title">Annual Forecast (CO<sub>2</sub>e / year)</div>
-					<div id="forecast-count">Too early to tell</div>
-					<div class="forecast-equivalent" id="flights">Come back in 1-2 days for your annual carbon forecast.
-					</div>
-					<div class="forecast-equivalent" id="trees"></div>
-				</div>
-			</div>
-
-		</div>
-
-	</div>
+    <div class="co2-value" id="co2Value">Loading...</div>
+    <script src="popup.js"></script>
 </body>
-
 </html>
