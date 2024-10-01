@@ -56,7 +56,7 @@ body {
 	margin-left: 20px;
 }
 
-#chart {
+/*#chart {
 	width: 300px;
 	border-left: solid 1px var(--primary-color);
 	border-bottom: solid 1px var(--primary-color);
@@ -117,7 +117,7 @@ body {
 	font-size: 14px;
 	margin-top: 15px;
 }
-
+*/
 .right-content {
 	flex: 55;
 	padding: 10px 30px;
