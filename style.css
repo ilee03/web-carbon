@@ -1,8 +1,8 @@
 :root {
-    --primary-color: #0AE187;
-    --secondary-color: #ddd;
-    --tertiary-color: #b8b8b8;
-    --background-color: #0f172a;
+    --primary-color: #11ff94;
+    --secondary-color: #ffffff;
+    --tertiary-color: yellowgreen;
+    --background-color: #102f29;
 }
 
 body {
@@ -25,7 +25,7 @@ body {
 
 .logo-text {
     color: var(--secondary-color);
-    font-size: 32px;
+    font-size:40px;
     font-weight: bolder;
 }
 
@@ -69,7 +69,7 @@ body {
     position: absolute;
     width: 100%;
     text-align: center;
-    color: #969696;
+    color: #ffffff;
     top: 50%;
     transform: translateY(-50%);
     z-index: 100;
@@ -88,7 +88,7 @@ body {
     position: relative;
     padding-bottom: 0px;
     margin-bottom: 0px;
-    border-left: solid 1px #404040;
+    border-left: solid 1px #aeb54f;
 }
 
 .chart-bar-wrap {
@@ -142,25 +142,21 @@ body {
 
 /* New styles for text and links */
 h2, .p {
+	color: white; /* Set text color to white */
     font-family:Arial, Helvetica, sans-serif
-    color: white; /* Set text color to white */
 }
 
 a {
+	color: white; /* Set text color to white */
 	font-family:Arial, Helvetica, sans-serif
-    color: white; /* Default link color to white */
     text-decoration: none; /* Optional: remove underline */
 }
 
 a:visited {
     color: yellowgreen; /* Color for visited links */
-	font-family:Arial, Helvetica, sans-serif
-
 }
 
 /* Optional: Add hover effects for better UX */
 a:hover {
     color: var(--primary-color); /* Change color on hover */
-	font-family:Arial, Helvetica, sans-serif
-
 }
