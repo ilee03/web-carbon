@@ -1,114 +1,88 @@
 var bg;
-var carbonPerMB = 1.76; // Average carbon per MB of data transferred
+var carbonPerPage = 1.76;	// Average carbon per page view
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    bg = chrome.extension.getBackgroundPage();
-    renderPage(tabs[0]);
+	bg = chrome.extension.getBackgroundPage();
+	renderPage(tabs[0]);
 });
 
 function formatCarbonWeight(value) {
-    var suffix = "g";
-    if (value >= 1000000000) {
-        value = value / 1000000000;
-        suffix = "mmt";
-    } else if (value >= 1000000) {
-        value = value / 1000000;
-        suffix = "mt";
-    } else if (value >= 1000) {
-        value = value / 1000;
-        suffix = "kg";
-    }
-    value = value % 1 === 0 ? value : value.toFixed(1);
-    return value + suffix;
+	var suffix = "g";
+	if (value >= 1000000000) {
+		value = value / 1000000000;
+		suffix = "mmt";
+	} else if (value >= 1000000) {
+		value = value / 1000000;
+		suffix = "mt";
+	} else if (value >= 1000) {
+		value = value / 1000;
+		suffix = "kg";
+	}
+	value = value % 1 == 0 ? value : value.toFixed(1);
+	return value + suffix;
 }
 
-function calculateCarbonFromPageSize(pageSizeInKB) {
-    return (pageSizeInKB / 1024) * (carbonPerMB * 1000); // Convert to grams
-}
+function renderPage(tab) {
+	var today = bg.getDayCount(0);
+	var todayCarbon = document.getElementById('today-carbon');
+	todayCarbon.innerHTML = formatCarbonWeight(today * carbonPerPage);
 
-function getPageSize(url) {
-    console.log("Fetching page size for URL:", url); // Log the URL
-    return new Promise((resolve) => {
-        fetch(url, { method: 'HEAD' })
-            .then((response) => {
-                console.log("Response Headers:", response.headers); // Log headers
-                const contentLength = response.headers.get('Content-Length');
-                if (contentLength) {
-                    resolve(parseInt(contentLength) / 1024); // Convert bytes to KB
-                } else {
-                    console.warn('Content-Length header is not available for this URL.'); // Warn if header is missing
-                    resolve(0); // If header is not available, return 0
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching page size:', error); // Log error
-                resolve(0); // If fetch fails, return 0
-            });
-    });
-}
+	// Calculate CO2e for the current page
+	var currentPageCarbon = carbonPerPage; // Assuming each page view contributes carbonPerPage g of CO2e
+	var currentPageCarbonElement = document.getElementById('current-page-carbon');
+	currentPageCarbonElement.innerHTML = formatCarbonWeight(currentPageCarbon);
 
-async function renderPage(tab) {
-    var today = bg.getDayCount(0);
-    var todayCarbon = document.getElementById('today-carbon');
-    todayCarbon.innerHTML = formatCarbonWeight(today * carbonPerMB * 1000); // Total CO2e for today
+	var dayArr = [];
+	var chart = document.getElementById('chart');
+	for (var i = 29; i >= 0; i--) {
+		var dayCount = bg.getDayCount(i);
+		dayArr[i] = dayCount * carbonPerPage;
+	}
+	var max = dayArr.length ? Math.max.apply(null, dayArr) : 0;
 
-    var pageSizeInKB = await getPageSize(tab.url);
-    var currentPageCarbon = calculateCarbonFromPageSize(pageSizeInKB);
+	var columnHeight = 120.0;
+	var ratio = columnHeight / max;
+	var bar = null;
+	var sum = 0;
+	var days = 0;
+	chart.style.height = (parseInt(columnHeight)) + 'px';
 
-    var currentPageCarbonElement = document.getElementById('current-page-carbon');
-    currentPageCarbonElement.innerHTML = formatCarbonWeight(currentPageCarbon);
+	for (var i = 29; i >= 0; i--) {
+		var dayCount = dayArr[i];
+		var barHeight = parseInt(dayCount * ratio);
 
-    var dayArr = [];
-    var chart = document.getElementById('chart');
-    for (var i = 29; i >= 0; i--) {
-        var dayCount = bg.getDayCount(i);
-        dayArr[i] = dayCount * (carbonPerMB * 1000); // Total CO2e for the day
-    }
-    var max = dayArr.length ? Math.max.apply(null, dayArr) : 0;
+		var column = document.createElement('div');
+		column.setAttribute('class', 'chart-column');
+		column.setAttribute('title', formatCarbonWeight(dayCount) + ' on ' + bg.formatDate(i, '-'));
+		column.style.height = parseInt(columnHeight) + 'px';
 
-    var columnHeight = 120.0;
-    var ratio = columnHeight / max;
-    var bar = null;
-    var sum = 0;
-    var days = 0;
-    chart.style.height = (parseInt(columnHeight)) + 'px';
+		var area = document.createElement('div');
+		area.setAttribute('class', 'chart-area');
+		area.style.height = parseInt(columnHeight) + 'px';
+		column.appendChild(area);
 
-    for (var i = 29; i >= 0; i--) {
-        var dayCount = dayArr[i];
-        var barHeight = parseInt(dayCount * ratio);
+		var barWrap = document.createElement('div');
+		barWrap.setAttribute('class', 'chart-bar-wrap');
+		barWrap.style.height = barHeight + 'px';
+		area.appendChild(barWrap);
 
-        var column = document.createElement('div');
-        column.setAttribute('class', 'chart-column');
-        column.setAttribute('title', formatCarbonWeight(dayCount) + ' on ' + bg.formatDate(i, '-'));
-        column.style.height = parseInt(columnHeight) + 'px';
+		bar = document.createElement('div');
+		bar.setAttribute('class', 'chart-bar');
+		if (i == 0) {
+			bar.setAttribute('class', 'chart-bar today');
+		}
+		bar.style.height = barHeight + 'px';
+		barWrap.appendChild(bar);
+		chart.appendChild(column);
 
-        var area = document.createElement('div');
-        area.setAttribute('class', 'chart-area');
-        area.style.height = parseInt(columnHeight) + 'px';
-        column.appendChild(area);
+		if (dayCount > 0) {
+			sum += dayCount;
+			days++;
+		}
+	}
 
-        var barWrap = document.createElement('div');
-        barWrap.setAttribute('class', 'chart-bar-wrap');
-        barWrap.style.height = barHeight + 'px';
-        area.appendChild(barWrap);
-
-        bar = document.createElement('div');
-        bar.setAttribute('class', 'chart-bar');
-        if (i === 0) {
-            bar.setAttribute('class', 'chart-bar today');
-        }
-        bar.style.height = barHeight + 'px';
-        barWrap.appendChild(bar);
-        chart.appendChild(column);
-
-        if (dayCount > 0) {
-            sum += dayCount;
-            days++;
-        }
-    }
-
-    if (days > 7) {
-        var chartDefault = document.getElementById('chart-default');
-        chartDefault.setAttribute('class', 'chart-default-hidden');
-    }
+	if (days > 7) {
+		var chartDefault = document.getElementById('chart-default');
+		chartDefault.setAttribute('class', 'chart-default-hidden');
+	}
 }
