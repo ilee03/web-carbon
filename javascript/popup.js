@@ -27,14 +27,22 @@ function calculateCarbonFromPageSize(pageSizeInKB) {
 }
 
 function getPageSize(url) {
+    console.log("Fetching page size for URL:", url); // Log the URL
     return new Promise((resolve) => {
         fetch(url, { method: 'HEAD' })
             .then((response) => {
+                console.log("Response Headers:", response.headers); // Log headers
                 const contentLength = response.headers.get('Content-Length');
-                resolve(contentLength ? parseInt(contentLength) / 1024 : 0); // Return size in KB
+                if (contentLength) {
+                    resolve(parseInt(contentLength) / 1024); // Convert bytes to KB
+                } else {
+                    console.warn('Content-Length header is not available for this URL.'); // Warn if header is missing
+                    resolve(0); // If header is not available, return 0
+                }
             })
-            .catch(() => {
-                resolve(0); // If fetching fails, return 0
+            .catch((error) => {
+                console.error('Error fetching page size:', error); // Log error
+                resolve(0); // If fetch fails, return 0
             });
     });
 }
