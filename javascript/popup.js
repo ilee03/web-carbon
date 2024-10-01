@@ -1,11 +1,13 @@
 var bg;
 var carbonPerPage = 1.76; // Average carbon per page view
 
-chrome.tabs.getSelected(null, function (tab) {
+// Get the background page and render the data
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 	bg = chrome.extension.getBackgroundPage();
-	renderPage();
+	renderPage(tabs[0].url); // Pass the current tab's URL
 });
 
+// Helper function to format the carbon weight
 function formatCarbonWeight(value) {
 	let suffix = "g";
 	if (value >= 1e9) {
@@ -21,10 +23,23 @@ function formatCarbonWeight(value) {
 	return value % 1 === 0 ? value : value.toFixed(1) + suffix;
 }
 
-function renderPage() {
-	const today = bg.getDayCount(0);
-	document.getElementById('today-carbon').innerHTML = formatCarbonWeight(today * carbonPerPage);
+// Function to render the popup page
+function renderPage(currentUrl) {
+	const today = bg.getDayCount(0); // Get today's total pageviews
+	const currentDomain = new URL(currentUrl).hostname; // Extract the domain from the URL
+	const domainCO2e = bg.getDomainCO2e(currentDomain); // Get CO₂e for the current domain
+	const totalCO2e = bg.getTotalCO2e(); // Get total CO₂e across all domains
 
+	// Display today's carbon for all websites
+	document.getElementById('today-carbon').innerHTML = formatCarbonWeight(today * carbonPerPage);
+	
+	// Display current website's CO₂e
+	document.getElementById('current-domain-carbon').innerHTML = formatCarbonWeight(domainCO2e);
+	
+	// Display total CO₂e across all websites
+	document.getElementById('total-carbon').innerHTML = formatCarbonWeight(totalCO2e);
+
+	// Build the chart for the past 30 days of total CO₂e
 	const dayArr = [];
 	const chart = document.getElementById('chart');
 	for (let i = 29; i >= 0; i--) {
@@ -34,7 +49,7 @@ function renderPage() {
 	const columnHeight = 120;
 	const ratio = max > 0 ? columnHeight / max : 0;
 
-	chart.innerHTML = ''; // Clear chart before rendering
+	chart.innerHTML = ''; // Clear the chart before rendering
 	let sum = 0, days = 0;
 
 	dayArr.forEach((dayCount, i) => {
