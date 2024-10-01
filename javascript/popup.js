@@ -1,9 +1,9 @@
 var bg;
 var carbonPerPage = 1.76;	// Average carbon per page view
 
-chrome.tabs.getSelected(null, function (tab) {
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 	bg = chrome.extension.getBackgroundPage();
-	renderPage();
+	renderPage(tabs[0]);
 });
 
 function formatCarbonWeight(value) {
@@ -18,14 +18,19 @@ function formatCarbonWeight(value) {
 		value = value / 1000;
 		suffix = "kg";
 	}
-	value = value % 1 == 0 ? value : value.toFixed(1)
+	value = value % 1 == 0 ? value : value.toFixed(1);
 	return value + suffix;
 }
 
-function renderPage() {
-	var today = bg.getDayCount(0)
+function renderPage(tab) {
+	var today = bg.getDayCount(0);
 	var todayCarbon = document.getElementById('today-carbon');
 	todayCarbon.innerHTML = formatCarbonWeight(today * carbonPerPage);
+
+	// Calculate CO2e for the current page
+	var currentPageCarbon = carbonPerPage; // Assuming each page view contributes carbonPerPage g of CO2e
+	var currentPageCarbonElement = document.getElementById('current-page-carbon');
+	currentPageCarbonElement.innerHTML = formatCarbonWeight(currentPageCarbon);
 
 	var dayArr = [];
 	var chart = document.getElementById('chart');
@@ -79,21 +84,5 @@ function renderPage() {
 	if (days > 7) {
 		var chartDefault = document.getElementById('chart-default');
 		chartDefault.setAttribute('class', 'chart-default-hidden');
-	}
-
-	var avgDay = sum / days;
-	if (avgDay) {
-		var year = avgDay * 365;
-		var fc = document.getElementById('forecast-count');
-		fc.innerHTML = formatCarbonWeight(year);
-
-		var flight = 50 * 1000;
-		var trees = 24 * 1000;
-		if (year >= flight) {
-			var fe = document.getElementById('flights');
-			var ft = document.getElementById('trees');
-			fe.innerHTML = "🛫  Whoa! That's equivalent to " + (year / flight).toFixed(0) + " flights between Paris and London. ";
-			ft.innerHTML = "🌴  You need to plant " + (year / trees).toFixed(0) + " trees to offset this amount.";
-		}
 	}
 }
