@@ -58,3 +58,48 @@ chrome.extension.onRequest.addListener(function (f, s, r) {
 		purgeOldKeys(_keepDays);
 	}
 });
+
+// Function to fetch the size of the webpage
+async function getPageSize(tabId) {
+    return new Promise((resolve) => {
+        chrome.tabs.executeScript(tabId, {
+            code: `
+                (function() {
+                    let totalSize = 0;
+                    let images = Array.from(document.images);
+
+                    // Calculate size of images
+                    images.forEach((img) => {
+                        if (img.complete) {
+                            totalSize += img.naturalWidth * img.naturalHeight * 4; // Assume 4 bytes per pixel (RGBA)
+                        }
+                    });
+
+                    // Estimate size of the rest of the page
+                    let pageSize = document.documentElement.outerHTML.length; // Approximate page size in characters
+                    totalSize += pageSize; // Add HTML size
+
+                    return totalSize;
+                })();
+            `,
+        }, (results) => {
+            resolve(results[0]);
+        });
+    });
+}
+
+// Modify the listener for page loads
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete') {
+        getPageSize(tabId).then(pageSize => {
+            // Convert size to kilobytes
+            const sizeInKB = pageSize / 1024;
+            // Assuming an emission factor of 0.0005 g CO2 per KB
+            const emissionFactor = 0.0005;
+            const carbonEmission = sizeInKB * emissionFactor; // in grams
+
+            // Store or send the emission data as needed
+            chrome.storage.local.set({ currentPageEmission: carbonEmission });
+        });
+    }
+});
