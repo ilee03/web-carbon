@@ -81,20 +81,6 @@ function renderPage() {
 		chartDefault.setAttribute('class', 'chart-default-hidden');
 	}
 
-	var avgDay = sum / days;
-	if (avgDay) {
-		var year = avgDay * 365;
-		var fc = document.getElementById('forecast-count');
-		fc.innerHTML = formatCarbonWeight(year);
 
-		var flight = 50 * 1000;
-		var trees = 24 * 1000;
-		if (year >= flight) {
-			var fe = document.getElementById('flights');
-			var ft = document.getElementById('trees');
-			fe.innerHTML = "🛫  Whoa! That's equivalent to " + (year / flight).toFixed(0) + " flights between Paris and London. ";
-			ft.innerHTML = "🌴  You need to plant " + (year / trees).toFixed(0) + " trees to offset this amount.";
-		}
-	}
 
 }
